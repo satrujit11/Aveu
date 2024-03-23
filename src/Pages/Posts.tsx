@@ -76,7 +76,7 @@ const Posts = () => {
           </div>
         </section>
         <section className="flex flex-col gap-3">
-          <Confessions />
+          <Confessions shared={shareMessage === "Share Again"}/>
         </section>
       </div>
     </div>
