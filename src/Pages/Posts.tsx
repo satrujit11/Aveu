@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Button from "../Components/Button";
 import Header from "../Components/Header";
 import Confessions from "../Components/Confessions";
+import Button from "../Components/Button";
 
 const Posts = () => {
+  const navigate = useNavigate();
   const id = JSON.parse(localStorage.getItem("aveu") || "{}").id;
   const [shareError, setShareError] = useState("");
   const [shareMessage, setShareMessage] = useState("Share!");
@@ -43,6 +45,15 @@ const Posts = () => {
     }
   }, [copied]);
 
+  useEffect(() => {
+    if (
+      !localStorage.getItem("aveu") ||
+      !JSON.parse(localStorage.getItem("aveu")!).name
+    ) {
+      navigate("/create");
+    }
+  }, []);
+
   return (
     <div className="bg-primary h-screen">
       <div className="container mx-auto px-4 flex flex-col gap-6">
@@ -76,7 +87,7 @@ const Posts = () => {
           </div>
         </section>
         <section className="flex flex-col gap-3">
-          <Confessions shared={shareMessage === "Share Again"}/>
+          <Confessions />
         </section>
       </div>
     </div>

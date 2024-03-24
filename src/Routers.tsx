@@ -7,11 +7,10 @@ const Routers = () => {
   return (
     <Routes>
       <Route path="/:userId" element={<Home />} />
-      <Route path="/" element={<Create />} />
-      <Route path="/posts" element={<Posts />} />
+      <Route path="/create" element={<Create />} />
+      <Route path="/" element={<Posts />} />
     </Routes>
   );
 };
 
 export default Routers;
-

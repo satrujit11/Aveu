@@ -29,7 +29,7 @@ const Create = () => {
     localStorage.setItem("aveu", JSON.stringify(data));
     // update the user's name if the user already exists based on id. other wise create a new user
     console.log(id, name);
-    navigate("/posts");
+    navigate("/");
   };
 
   function generateRandomId() {

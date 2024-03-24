@@ -5,7 +5,7 @@ const Navigation = ({ navigationData, setTab, tab }: any) => {
 
   return (
     <ul
-      className={`grid`}
+      className="grid"
       style={{
         gridTemplateColumns: "repeat(" + navigationData.length + ", 1fr)",
       }}

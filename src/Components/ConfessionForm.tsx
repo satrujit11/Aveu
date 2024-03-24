@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "./Button";
 import { useParams } from "react-router-dom";
 
-const ConfessionForm = ({ setShowGetYourOwnMessages }: any) => {
+const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
   const { userId } = useParams();
   const id = localStorage.getItem("aveu")
     ? JSON.parse(localStorage.getItem("aveu")!).id
@@ -47,6 +47,7 @@ const ConfessionForm = ({ setShowGetYourOwnMessages }: any) => {
     };
     localStorage.setItem("aveu", JSON.stringify(data));
     console.log(id, userId, message, latitude, longitude);
+    setSendMessage(true);
   };
   return (
     <>

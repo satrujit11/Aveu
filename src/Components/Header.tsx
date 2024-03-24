@@ -7,7 +7,7 @@ const Header = () => {
       <img src={Logo} alt="logo" className="max-h-16" />
       <i
         className="material-symbols-outlined text-secondary p-2 border-[1px] rounded border-secondary cursor-pointer"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/create")}
       >
         add
       </i>
