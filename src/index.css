@@ -9,3 +9,16 @@ input::placeholder, textarea::placeholder{
 .material-symbols-outlined {
   user-select: none;
 }
+
+@font-face {
+  font-family: 'Architects Daughter';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Architects Daughter'), local('ArchitectsDaughter-Regular'),
+       url(https://fonts.gstatic.com/s/architectsdaughter/v9/KtkxAKiDZI_td1Lkx62xHZHDtgO_Y-bvfY5mFW3wawM.woff2) format('woff2'); /* URL to the font file */
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+

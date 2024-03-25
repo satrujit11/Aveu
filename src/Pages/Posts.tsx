@@ -10,19 +10,18 @@ const Posts = () => {
   const [shareError, setShareError] = useState("");
   const [shareMessage, setShareMessage] = useState("Share!");
   const [copied, setCopied] = useState(false);
-
-  const url = `google.com/${id}`;
+  const currentUrl = window.location.href;
+  const url = `${currentUrl}${id}`;
 
   const handleShare = async () => {
+    const text = `💌 Share your thoughts anonymously and join the conversation! 🤫✨ ${url} #Aneu #AnonymousMessage`;
     setShareError("");
     setShareMessage("Sharing...");
     try {
-      const text = `💌 Share your thoughts anonymously and join the conversation! 🤫✨ ${url} #Aneu #AnonymousMessage`;
       await navigator.share({ text });
       setShareMessage("Share Again");
     } catch (error) {
       console.error("Error sharing:", error);
-      setShareError("Sharing failed. Please try again.");
       setShareMessage("Share Again");
     }
   };
@@ -54,13 +53,29 @@ const Posts = () => {
     }
   }, []);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 0;
+      setIsScrolled(scrolled);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="bg-primary h-screen">
+    <div className="bg-primary min-h-[100dvh]">
       <div className="container mx-auto px-4 flex flex-col gap-6">
         <section className="flex flex-col items-center justify-center h-full">
           <div className="flex flex-col items-center gap-4 w-full">
-            <Header />
-            <div className="w-full h-[1px] bg-secondary_light"></div>
+            <div
+              className={`w-full flex flex-col gap-2 ${isScrolled && "sticky top-0 bg-primary "}`}
+            >
+              <Header />
+              <div className="w-full h-[1px] bg-secondary_light"></div>
+            </div>
             <h2 className="text-2xl font-bold text-center text-secondary">
               Share your Link to get{" "}
               <span className="font-cursiveStyle">Anonymous messages</span>

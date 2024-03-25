@@ -2,9 +2,20 @@ import { useState } from "react";
 import Button from "../Components/Button";
 import Logo from "../assets/logo-transparent.png";
 import { useNavigate } from "react-router-dom";
+import { db } from "../Config/firebase";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 const Create = () => {
   const navigate = useNavigate();
+  const collectionRef = collection(db, "data");
   const [name, setName] = useState("");
   const handleLinkCreate = () => {
     let id, localName, userIds;
@@ -27,16 +38,39 @@ const Create = () => {
       userIds: [...userIds],
     };
     localStorage.setItem("aveu", JSON.stringify(data));
-    // update the user's name if the user already exists based on id. other wise create a new user
-    console.log(id, name);
-    navigate("/");
+
+    const q = query(collectionRef, where("userId", "==", id));
+    getDocs(q).then((data) => {
+      const availableData = data.docs.map((item) => {
+        return { ...item.data(), id: item.id };
+      });
+      if (availableData.length > 0) {
+        const docRef = doc(db, "data", availableData[0].id);
+        updateDoc(docRef, {
+          name: name,
+        })
+          .then(() => {
+            navigate("/");
+          })
+          .catch((err) => console.log(err));
+      } else {
+        addDoc(collectionRef, {
+          name: name,
+          userId: id,
+        })
+          .then(() => {
+            navigate("/");
+          })
+          .catch((err) => console.log(err));
+      }
+    });
   };
 
   function generateRandomId() {
     return Math.random().toString(36).substring(2, 15);
   }
   return (
-    <div className="bg-primary min-h-screen">
+    <div className="bg-primary min-h-[100dvh]">
       <div className="container mx-auto px-4">
         <section className="flex flex-col items-center gap-8 justify-between min-h-screen pb-8">
           <div className="flex flex-col gap-5 w-full">

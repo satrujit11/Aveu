@@ -1,9 +1,22 @@
 import { useState, useEffect } from "react";
 import Button from "./Button";
 import { useParams } from "react-router-dom";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../Config/firebase";
 
 const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
   const { userId } = useParams();
+  const [userName, setUserName] = useState("");
+  const [otherUserId, setOtherUserId] = useState("");
   const id = localStorage.getItem("aveu")
     ? JSON.parse(localStorage.getItem("aveu")!).id
     : generateRandomId();
@@ -33,6 +46,16 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
     } else {
       setError("Geolocation is not supported by this browser.");
     }
+
+    const q = query(collection(db, "data"), where("userId", "==", userId));
+    getDocs(q).then((data) => {
+      const availableData = data.docs.map((item) => {
+        return { ...item.data(), id: item.id };
+      });
+      // @ts-ignore
+      setUserName(availableData[0].name);
+      setOtherUserId(availableData[0].id);
+    });
   }, []);
 
   const handleSubmit = (e: any) => {
@@ -43,17 +66,59 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
     const userIds = [...prevUserIds, userId];
     const data = {
       id: id,
+      name:
+        (localStorage.getItem("aveu") &&
+          JSON.parse(localStorage.getItem("aveu")!).name) ||
+        "",
       userIds: userIds,
     };
     localStorage.setItem("aveu", JSON.stringify(data));
-    console.log(id, userId, message, latitude, longitude);
     setSendMessage(true);
+
+    handleConfessionSubmit();
+
+    const q = query(collection(db, "data"), where("userId", "==", id));
+    getDocs(q).then((data) => {
+      const availableData = data.docs.map((item) => {
+        return { ...item.data(), id: item.id };
+      });
+      if (availableData.length == 0) {
+        addDoc(collection(db, "data"), {
+          userId: id,
+        })
+          .then(() => {
+            console.log("Document added successfully");
+          })
+          .catch((error) => {
+            console.error("Error adding document: ", error);
+          });
+      } else {
+        console.log("Already Exists");
+      }
+    });
   };
+
+  const handleConfessionSubmit = () => {
+    const docRef = doc(db, "data", otherUserId);
+
+    updateDoc(docRef, {
+      confessions: arrayUnion({
+        id: generateRandomId(),
+        message: message,
+        location: `${latitude}, ${longitude}`,
+        time: new Date().toLocaleString(),
+        submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
+      }),
+    }).then(() => {
+      setMessage("");
+    }).catch((err) => console.log(err));
+  };
+
   return (
     <>
       <h2 className="text-2xl font-medium text-secondary text-center font-cursiveStyle">
         Send anonymous message to{" "}
-        <span className="font-bold font-roboto">{userId}</span>
+        <span className="font-bold font-roboto">{userName}</span>
       </h2>
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
         <textarea
