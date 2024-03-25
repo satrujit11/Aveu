@@ -97,51 +97,47 @@ const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
   }, [relevantComments]);
 
   useEffect(() => {
-    setRelevantComments(
-      comments.filter((comment: any) => comment.postId === confession.id)
-    );
+    if (comments) {
+      setRelevantComments(
+        comments.filter((comment: any) => comment.postId === confession.id)
+      );
+    }
   }, [comments]);
 
   return (
     <div
-      className="flex flex-col gap-2 w-full p-2 border border-secondary_light rounded-lg bg-primary_light relative"
+      className="flex flex-col gap-3 w-full p-2 border border-secondary_light rounded-lg bg-primary_light relative"
       ref={confessionCard}
       id="confession-card"
     >
       <h3 className="text-2xl font-semibold text-secondary font-sans">
         {confession.message}
       </h3>
-      <span className="text-secondary_light font-sans">{confession.time}</span>
-      <div className="flex justify-end items-center gap-4 remove-me">
-        {showCommentBox && (
-          <input
-            type="text"
-            value={comment}
-            onChange={(e) => setComment(e.target.value.trimStart())}
-            placeholder="Write your response"
-            className="w-full rounded-lg p-2 bg-primary_light outline-none  border border-secondary focus:border-secondary focus:border-2 font-bold text-secondary placeholder-black resize-none"
-          />
-        )}
+      <div className="flex justify-between">
+        <span className="text-secondary_light font-sans">
+          {confession.time}
+        </span>
+        <div className="flex justify-end items-center gap-4 remove-me">
+          {showCommentCount && (
+            <p className="text-secondary_light font-sans">{commetCount}</p>
+          )}
 
-        {showCommentCount && (
-          <p className="text-secondary_light font-sans">{commetCount}</p>
-        )}
-
-        <i
-          className="material-symbols-outlined text-secondary_light"
-          onClick={() => handleComment()}
-        >
-          {showCommentBox ? (comment !== "" ? "send" : "close") : "comment"}
-        </i>
-
-        {!showCommentBox && (
           <i
             className="material-symbols-outlined text-secondary_light"
-            onClick={handleShareImage}
+            onClick={() => handleComment()}
           >
-            share
+            {showCommentBox ? (comment !== "" ? "send" : "close") : "comment"}
           </i>
-        )}
+
+          {!showCommentBox && (
+            <i
+              className="material-symbols-outlined text-secondary_light"
+              onClick={handleShareImage}
+            >
+              share
+            </i>
+          )}
+        </div>
       </div>
       {showCommentDialog && (
         <CommentDialog
@@ -198,12 +194,14 @@ const CommentDialog = ({
     setShowCommentDialog(false);
   };
 
-   const commentsContainerRef = useRef(null);
+  const commentsContainerRef = useRef(null);
 
   // Scroll to bottom function
   const scrollToBottom = () => {
     // @ts-ignore
-    commentsContainerRef.current.scrollTop = commentsContainerRef.current.scrollHeight;
+    commentsContainerRef.current.scrollTop =
+      // @ts-ignore
+      commentsContainerRef.current.scrollHeight;
   };
 
   // Scroll to bottom when comments change
@@ -225,14 +223,17 @@ const CommentDialog = ({
           >
             close
           </i>
-          <div className="flex flex-col gap-2 w-full p-2 border border-secondary_light rounded-lg bg-primary_light relative items-start">
-            <h3 className="text-lg font-semibold text-secondary font-sans">
+          <div className="flex flex-col gap-2 w-full p-2 border border-secondary_light rounded-lg bg-primary_light relative items-start overflow-hidden text-ellipsis">
+            <h3 className="text-lg font-semibold text-secondary font-sans truncate overflow-hidden text-ellipsis w-full text-left">
               {confession.message}
             </h3>
           </div>
         </div>
       </div>
-      <div className="h-full w-full bg-red flex-1 flex flex-col gap-3 overflow-y-scroll max-h-[50vh]" ref={commentsContainerRef}>
+      <div
+        className="h-full w-full bg-red flex-1 flex flex-col gap-3 overflow-y-scroll max-h-[50vh] no-scrollbar"
+        ref={commentsContainerRef}
+      >
         {comments.map((comment: any) => (
           <div key={comment.id} className="flex flex-col gap-2 ">
             <div
