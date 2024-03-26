@@ -6,7 +6,16 @@ import {
   useState,
 } from "react";
 import { toPng } from "html-to-image";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  query,
+  updateDoc,
+  where,
+  onSnapshot,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../Config/firebase";
 
 const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
@@ -67,16 +76,40 @@ const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
 
   const handleCommentSubmit = () => {
     const docRef = doc(db, "data", otherUserId);
+    const randomId = generateRandomId();
+    const time = new Date().toLocaleString();
     updateDoc(docRef, {
       comments: arrayUnion({
-        id: generateRandomId(),
+        id: randomId,
         postId: confession.id,
         message: comment,
-        time: new Date().toLocaleString(),
+        time: time,
         submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
       }),
     })
       .then(() => {
+        const q3 = query(
+          collection(db, "posts"),
+          where("postId", "==", confession.id)
+        );
+        getDocs(q3)
+          .then((data) => {
+            const datas = data.docs.map((doc) => {
+              return { ...doc.data(), id: doc.id };
+            });
+            const otherPostId = datas[0].id;
+            const postsRef = doc(db, "posts", otherPostId);
+            updateDoc(postsRef, {
+              comments: arrayUnion({
+                id: randomId,
+                postId: confession.id,
+                message: comment,
+                time: time,
+                submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
+              }),
+            });
+          })
+          .catch((err) => console.log(err));
         setShowCommentBox(false);
         setComment("");
       })
@@ -175,7 +208,7 @@ const defaultDialogStyle: React.CSSProperties = {
     "opacity 0.2s ease-out alternate , display 0.2s ease-out alternate",
 };
 
-const CommentDialog = ({
+export const CommentDialog = ({
   setShowCommentDialog,
   confession,
   comment,
@@ -240,7 +273,8 @@ const CommentDialog = ({
               className={`flex flex-col max-w-70 ${comment.submittedBy === id ? "items-end" : "items-start"}`}
             >
               <h5
-                className={`font-semibold text-secondary font-sans p-1 bg-primary_light rounded  max-w-[70vw] ${comment.submittedBy === id ? "text-right" : "text-left"}`}
+                className={`font-semibold text-secondary font-sans p-1 bg-primary_light rounded text-wrap  max-w-[70vw] overflow-x-hidden ${comment.submittedBy === id ? "text-left" : "text-left"}`}
+                style={{ overflowWrap: "break-word" }}
               >
                 {comment.message}
               </h5>

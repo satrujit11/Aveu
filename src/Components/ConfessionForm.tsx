@@ -15,6 +15,7 @@ import { db } from "../Config/firebase";
 
 const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
   const { userId } = useParams();
+  const postsRef = collection(db, "posts");
   const [userName, setUserName] = useState("");
   const [otherUserId, setOtherUserId] = useState("");
   const id = localStorage.getItem("aveu")
@@ -100,18 +101,33 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
 
   const handleConfessionSubmit = () => {
     const docRef = doc(db, "data", otherUserId);
+    const randomId = generateRandomId();
+    const time = new Date().toLocaleString();
 
     updateDoc(docRef, {
       confessions: arrayUnion({
-        id: generateRandomId(),
+        id: randomId,
         message: message,
         location: `${latitude}, ${longitude}`,
-        time: new Date().toLocaleString(),
+        time: time,
         submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
       }),
-    }).then(() => {
-      setMessage("");
-    }).catch((err) => console.log(err));
+    })
+      .then(() => {
+        addDoc(postsRef, {
+          postId: randomId,
+          message: message,
+          location: `${latitude}, ${longitude}`,
+          time: time,
+          userId: userId,
+          submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
+        })
+          .then(() => {
+            setMessage("");
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

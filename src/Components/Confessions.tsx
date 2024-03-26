@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import Navigation from "./Navigation";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../Config/firebase";
 import ConfessionCard from "./ConfessionCard";
 import MyLottieLoadingAnimation from "./LoadingAnimation";
+import RepliesCard from "./RepliesCard";
 
 const Confessions = () => {
   const [tab, setTab] = useState("message");
@@ -17,6 +13,7 @@ const Confessions = () => {
   const [refresh, setRefresh] = useState(false);
   const [confessions, setConfessions] = useState([]);
   const [comments, setComments] = useState([]);
+  const [replies, setReplies] = useState([]);
   const navigationData = [
     { name: "Messages", id: "message" },
     { name: "Replies", id: "replies" },
@@ -44,11 +41,21 @@ const Confessions = () => {
       const datas = data.docs.map((doc) => {
         return { ...doc.data(), id: doc.id };
       });
+      //@ts-ignore
       setUserRealId(datas[0].id);
       //@ts-ignore
       setConfessions(datas[0].confessions);
       //@ts-ignore
       setComments(datas[0].comments);
+    });
+
+    const q2 = query(collection(db, "posts"), where("submittedBy", "==", id));
+    onSnapshot(q2, (snapshot) => {
+      const filteredPosts = snapshot.docs
+        .filter((doc) => doc.data().comments) // Filter out posts with a non-empty comments array
+        .map((doc) => ({ ...doc.data(), id: doc.id }));
+      //@ts-ignore
+      setReplies(filteredPosts);
     });
   }, []);
   return (
@@ -64,22 +71,34 @@ const Confessions = () => {
           </i>
         </div>
       </div>
-      {userIds.length > 0 && (
+      {userIds.length > 0 && replies.length > 0 && (
         <Navigation navigationData={navigationData} setTab={setTab} tab={tab} />
       )}
       {refresh ? (
         <MyLottieLoadingAnimation />
+      ) : confessions && tab === "message" ? (
+        <div className="flex flex-col gap-3 pb-4">
+          {confessions
+            .slice()
+            .reverse()
+            .map((data: any) => (
+              <ConfessionCard
+                key={data.id}
+                confession={data}
+                otherUserId={userRealId}
+                comments={comments}
+              />
+            ))}
+        </div>
       ) : (
-        confessions && tab === "message" && (
-          <div className="flex flex-col gap-3 pb-4">
-            {confessions
-              .slice()
-              .reverse()
-              .map((data: any) => (
-                <ConfessionCard key={data.id} confession={data} otherUserId={userRealId} comments={comments} />
-              ))}
-          </div>
-        )
+        <div className="flex flex-col gap-3 pb-4">
+          {replies
+            .slice()
+            .reverse()
+            .map((data: any) => (
+              <RepliesCard key={data.id} replies={data} />
+            ))}
+        </div>
       )}
     </>
   );

@@ -6,7 +6,7 @@ import Button from "../Components/Button";
 
 const Posts = () => {
   const navigate = useNavigate();
-  const id = JSON.parse(localStorage.getItem("aveu")!).id;
+  const id = JSON.parse(localStorage.getItem("aveu") || "{}").id;
   const [shareError, setShareError] = useState("");
   const [shareMessage, setShareMessage] = useState("Share!");
   const [copied, setCopied] = useState(false);
@@ -101,9 +101,11 @@ const Posts = () => {
             )}
           </div>
         </section>
+        {localStorage.getItem("aveu") &&
         <section className="flex flex-col gap-3">
           <Confessions />
         </section>
+        }
       </div>
     </div>
   );
