@@ -27,18 +27,6 @@ const Home = () => {
         //@ts-ignore
         setReplies(filteredPosts);
       });
-      if (replies.length > 0) {
-        Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            // Show the notification
-            new Notification("You have got replies on your confession", {
-              body: "Click to create an account and start conversation",
-              icon: Logo,
-              requireInteraction: true, // This will keep the notification open until the user interacts with it
-            }).onclick = () => navigate("/create");
-          }
-        });
-      }
     }
   }, [sendMessage, replies]);
   return (
@@ -48,7 +36,9 @@ const Home = () => {
           <div className="flex flex-col gap-4 w-full">
             <img src={Logo} alt="logo" className="max-h-36 mx-auto" />
             {sendMessage ? (
-              <MyLottieAnimation showCheckBackMessage={replies.length === 0 && true} />
+              <MyLottieAnimation
+                showCheckBackMessage={replies.length === 0 && true}
+              />
             ) : (
               <ConfessionForm
                 setShowGetYourOwnMessages={setShowGetYourOwnMessages}
