@@ -13,7 +13,6 @@ import {
   query,
   updateDoc,
   where,
-  onSnapshot,
   getDocs,
 } from "firebase/firestore";
 import { db } from "../Config/firebase";

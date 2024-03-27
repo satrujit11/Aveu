@@ -18,9 +18,6 @@ const Confessions = () => {
     { name: "Messages", id: "message" },
     { name: "Replies", id: "replies" },
   ];
-  const userIds = localStorage.getItem("aveu")
-    ? JSON.parse(localStorage.getItem("aveu")!).userIds
-    : [];
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -52,16 +49,20 @@ const Confessions = () => {
     const q2 = query(collection(db, "posts"), where("submittedBy", "==", id));
     onSnapshot(q2, (snapshot) => {
       const filteredPosts = snapshot.docs
-        .filter((doc) => doc.data().comments) // Filter out posts with a non-empty comments array
+        .filter((doc) => doc.data().comments)
         .map((doc) => ({ ...doc.data(), id: doc.id }));
+      console.log(filteredPosts, "filteredPosts");
       //@ts-ignore
       setReplies(filteredPosts);
+      console.log(replies, "replies");
     });
   }, []);
   return (
     <>
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-secondary">Confessions</h2>
+        <h2 className="text-xl font-bold text-secondary">
+          { !confessions && replies.length > 0 ? "Replies" : "Confessions"}
+        </h2>
         <div className="p-2 rounded cursor-pointer bg-primary_light flex justify-center items-center">
           <i
             className={`material-symbols-outlined text-secondary  ${refresh ? "animate-spin" : ""}`}
@@ -71,7 +72,7 @@ const Confessions = () => {
           </i>
         </div>
       </div>
-      {userIds.length > 0 && replies.length > 0 && (
+      {replies.length > 0 && confessions && (
         <Navigation navigationData={navigationData} setTab={setTab} tab={tab} />
       )}
       {refresh ? (

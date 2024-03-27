@@ -28,7 +28,7 @@ const Create = () => {
     userIds = localStorage.getItem("aveu")
       ? JSON.parse(localStorage.getItem("aveu")!).userIds
       : [];
-    if (localName !== name && name !== "") {
+    if (localName !== "") {
       userIds = [...userIds];
       id = generateRandomId();
     }
