@@ -1,4 +1,5 @@
 import {
+  MouseEvent,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -242,7 +243,8 @@ export const CommentDialog = ({
   }, [comments]);
 
   const inputRef = useRef<any>(null);
-  const handleSubmit = () => {
+  const handleSubmit = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
     handleCommentSubmit();
     inputRef.current.focus();
   };
@@ -303,7 +305,7 @@ export const CommentDialog = ({
         {comment && (
           <i
             className="material-symbols-outlined text-[#ffffff] p-3  rounded  cursor-pointer h-full bg-secondary"
-            onClick={() => handleSubmit()}
+            onClick={handleSubmit}
           >
             send
           </i>
