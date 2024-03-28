@@ -198,7 +198,7 @@ const defaultDialogStyle: React.CSSProperties = {
   width: "100vw",
   borderRadius: "0.6rem 0.6rem 0 0",
   maxWidth: "900px",
-  maxHeight: "60vh",
+  maxHeight: "50vh",
   minHeight: "20vh",
   top: "inherit",
   animation: "slideUp 0.2s ease-out alternate",
