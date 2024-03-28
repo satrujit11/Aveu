@@ -227,18 +227,18 @@ export const CommentDialog = ({
     setShowCommentDialog(false);
   };
 
-  const commentsContainerRef = useRef<HTMLDivElement>(null);
-
-const scrollToBottom = () => {
-  if (commentsContainerRef.current) {
-    const container = commentsContainerRef.current;
-    container.scrollTop = container.scrollHeight - container.clientHeight;
-  }
-};
-  // Scroll to bottom when comments change
-  useEffect(() => {
-    scrollToBottom();
-  }, [comments]);
+  // const commentsContainerRef = useRef<HTMLDivElement>(null);
+  //
+  // const scrollToBottom = () => {
+  //   if (commentsContainerRef.current) {
+  //     const container = commentsContainerRef.current;
+  //     container.scrollTop = container.scrollHeight - container.clientHeight;
+  //   }
+  // };
+  // // Scroll to bottom when comments change
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [comments]);
 
   const inputRef = useRef<any>(null);
   const handleSubmit = (e: MouseEvent<HTMLDivElement>) => {
@@ -270,7 +270,6 @@ const scrollToBottom = () => {
       </div>
       <div
         className="h-full w-full bg-red flex-1 flex flex-col gap-3 overflow-y-scroll max-h-[50vh] no-scrollbar"
-        ref={commentsContainerRef}
       >
         {comments.map((comment: any) => (
           <div key={comment.id} className="flex flex-col gap-2 ">
