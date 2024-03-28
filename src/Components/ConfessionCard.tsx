@@ -227,16 +227,14 @@ export const CommentDialog = ({
     setShowCommentDialog(false);
   };
 
-  const commentsContainerRef = useRef(null);
+  const commentsContainerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom function
-  const scrollToBottom = () => {
-    // @ts-ignore
-    commentsContainerRef.current.scrollTop =
-      // @ts-ignore
-      commentsContainerRef.current.scrollHeight;
-  };
-
+const scrollToBottom = () => {
+  if (commentsContainerRef.current) {
+    const container = commentsContainerRef.current;
+    container.scrollTop = container.scrollHeight - container.clientHeight;
+  }
+};
   // Scroll to bottom when comments change
   useEffect(() => {
     scrollToBottom();
