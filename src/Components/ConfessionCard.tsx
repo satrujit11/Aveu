@@ -1,4 +1,5 @@
 import {
+  createRef,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -241,6 +242,12 @@ export const CommentDialog = ({
     scrollToBottom();
   }, [comments]);
 
+  const inputRef = useRef<any>(null);
+  const handleSubmit = () => {
+    handleCommentSubmit();
+    inputRef.current.focus();
+  };
+
   return (
     <dialog
       ref={dialog}
@@ -285,8 +292,9 @@ export const CommentDialog = ({
           </div>
         ))}
       </div>
-      <div className="flex justify-end items-center gap-4 pt-2">
+      <div className="flex justify-end items-center gap-3 pt-2">
         <input
+          ref={inputRef}
           type="text"
           value={comment}
           onChange={(e) => setComment(e.target.value.trimStart())}
@@ -295,8 +303,8 @@ export const CommentDialog = ({
         />
         {comment && (
           <i
-            className="material-symbols-outlined text-[#ffffff] p-2  rounded  cursor-pointer h-full bg-secondary"
-            onClick={() => handleCommentSubmit()}
+            className="material-symbols-outlined text-[#ffffff] p-3  rounded  cursor-pointer h-full bg-secondary"
+            onClick={() => handleSubmit()}
           >
             send
           </i>
