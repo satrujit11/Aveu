@@ -1,5 +1,5 @@
 import {
-    MouseEvent,
+  MouseEvent,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -17,9 +17,10 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { db } from "../Config/firebase";
+import Logo from "../assets/logo-transparent.png";
 
 const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
-  const confessionCard = useRef(null);
+  const confessionCard = useRef<HTMLDivElement>(null);
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [comment, setComment] = useState("");
   const [relevantComments, setRelevantComments] = useState([]);
@@ -37,7 +38,22 @@ const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
       );
     };
 
-    toPng(node!, { cacheBust: true, filter })
+    toPng(node!, {
+      cacheBust: true,
+      filter,
+      style: {
+        padding: "1rem",
+        backgroundColor: `#fcee74`,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+      },
+      width: 388,
+      height: 694,
+    })
       .then(async (dataUrl) => {
         return fetch(dataUrl)
           .then((res) => res.blob())
@@ -50,7 +66,7 @@ const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
       .catch(function (error) {
         console.error("Error generating or sharing image:", error);
       });
-  }, [confessionCard]);
+  }, [confessionCard, Logo]);
 
   const handleComment = () => {
     if (relevantComments.length == 0) {
@@ -138,51 +154,77 @@ const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
   }, [comments]);
 
   return (
-    <div
-      className="flex flex-col gap-3 w-full p-2 border border-secondary_light rounded-lg bg-primary_light relative"
-      ref={confessionCard}
-      id="confession-card"
-    >
-      <h3 className="text-2xl font-semibold text-secondary font-sans">
-        {confession.message}
-      </h3>
-      <div className="flex justify-between">
-        <span className="text-secondary_light font-sans">
-          {confession.time}
-        </span>
-        <div className="flex justify-end items-center gap-4 remove-me">
-          {showCommentCount && (
-            <p className="text-secondary_light font-sans">{commetCount}</p>
-          )}
-
-          <i
-            className="material-symbols-outlined text-secondary_light"
-            onClick={() => handleComment()}
-          >
-            {showCommentBox ? (comment !== "" ? "send" : "close") : "comment"}
-          </i>
-
-          {!showCommentBox && (
-            <i
-              className="material-symbols-outlined text-secondary_light"
-              onClick={handleShareImage}
-            >
-              share
-            </i>
-          )}
+    <div>
+      {/* Confession Card Image */}
+      <div className="hidden absolute">
+        <div ref={confessionCard}>
+          <div className="flex flex-col justify-between gap-3 items-center h-full py-6 drop-shadow-2xl">
+            <div className="flex justify-center w-24 items-center">
+              <img src={Logo} alt="logo" className="" />
+            </div>
+            <div className="flex flex-col rounded-lg overflow-hidden">
+              <div className="text-[#ffffff] font-sans p-2 py-4 bg-secondary w-full text-center">
+                Send anonymous message to me!
+              </div>
+              <div
+                className="flex flex-col justify-center gap-3 w-full min-w-80 p-2 bg-[#ffffff] relative min-h-[80px]"
+                id="confession-card"
+              >
+                <h3 className="text-2xl font-semibold text-secondary font-sans text-center">
+                  {confession.message}
+                </h3>
+              </div>
+            </div>
+            <div className="opacity-0 h-20">Item</div>
+          </div>
         </div>
       </div>
-      {showCommentDialog && (
-        <CommentDialog
-          setShowCommentDialog={setShowCommentDialog}
-          confession={confession}
-          comment={comment}
-          setComment={setComment}
-          handleCommentSubmit={handleCommentSubmit}
-          comments={relevantComments}
-          id={id}
-        />
-      )}
+
+      {/* Confession Card */}
+      <div
+        className="flex flex-col gap-3 w-full p-2 border border-secondary_light rounded-lg bg-primary_light relative "
+        id="confession-card"
+      >
+        <h3 className="text-2xl font-semibold text-secondary font-sans">
+          {confession.message}
+        </h3>
+        <div className="flex justify-between">
+          <span className="text-secondary_light font-sans">
+            {confession.time}
+          </span>
+          <div className="flex justify-end items-center gap-4 remove-me">
+            {showCommentCount && (
+              <p className="text-secondary_light font-sans">{commetCount}</p>
+            )}
+            <i
+              className="material-symbols-outlined text-secondary_light"
+              onClick={() => handleComment()}
+            >
+              {showCommentBox ? (comment !== "" ? "send" : "close") : "comment"}
+            </i>
+
+            {!showCommentBox && (
+              <i
+                className="material-symbols-outlined text-secondary_light"
+                onClick={handleShareImage}
+              >
+                share
+              </i>
+            )}
+          </div>
+        </div>
+        {showCommentDialog && (
+          <CommentDialog
+            setShowCommentDialog={setShowCommentDialog}
+            confession={confession}
+            comment={comment}
+            setComment={setComment}
+            handleCommentSubmit={handleCommentSubmit}
+            comments={relevantComments}
+            id={id}
+          />
+        )}
+      </div>
     </div>
   );
 };
