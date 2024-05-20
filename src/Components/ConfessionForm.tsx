@@ -22,8 +22,8 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
     ? JSON.parse(localStorage.getItem("aveu")!).id
     : generateRandomId();
   const [message, setMessage] = useState("");
-  const [latitude, setLatitude] = useState<any>(null);
-  const [longitude, setLongitude] = useState<any>(null);
+  // const [latitude, setLatitude] = useState<any>(null);
+  // const [longitude, setLongitude] = useState<any>(null);
   // @ts-ignore
   const [accuracy, setAccuracy] = useState<any>(null); //@ts-ignore
   const [error, setError] = useState<any>(null);
@@ -34,16 +34,16 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
 
   useEffect(() => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
-          setAccuracy(position.coords.accuracy);
-        },
-        function (error) {
-          setError(error.message);
-        }
-      );
+      // navigator.geolocation.getCurrentPosition(
+      //   function (position) {
+      //     setLatitude(position.coords.latitude);
+      //     setLongitude(position.coords.longitude);
+      //     setAccuracy(position.coords.accuracy);
+      //   },
+      //   function (error) {
+      //     setError(error.message);
+      //   }
+      // );
     } else {
       setError("Geolocation is not supported by this browser.");
     }
@@ -108,7 +108,7 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
       confessions: arrayUnion({
         id: randomId,
         message: message,
-        location: `${latitude}, ${longitude}`,
+        // location: `${latitude}, ${longitude}`,
         time: time,
         submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
       }),
@@ -117,7 +117,7 @@ const ConfessionForm = ({ setShowGetYourOwnMessages, setSendMessage }: any) => {
         addDoc(postsRef, {
           postId: randomId,
           message: message,
-          location: `${latitude}, ${longitude}`,
+          // location: `${latitude}, ${longitude}`,
           time: time,
           userId: userId,
           submittedBy: JSON.parse(localStorage.getItem("aveu")!).id,
