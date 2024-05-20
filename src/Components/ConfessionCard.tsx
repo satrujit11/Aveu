@@ -29,6 +29,7 @@ const ConfessionCard = ({ confession, otherUserId, comments }: any) => {
   const [showCommentDialog, setShowCommentDialog] = useState(false);
   const id = JSON.parse(localStorage.getItem("aveu")!).id;
 
+
   const handleShareImage = useCallback(() => {
     const node = confessionCard.current;
     const filter = (node: any) => {
