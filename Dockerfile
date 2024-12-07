@@ -27,4 +27,3 @@ EXPOSE 3000
 
 # Serve the build folder using the 'serve' package (pnpm equivalent)
 CMD [ "serve", "-s", "dist" ]
-
